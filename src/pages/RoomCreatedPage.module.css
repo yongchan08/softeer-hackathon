@@ -12,10 +12,15 @@
 
 .sectionTitle {
   margin-top: var(--space-lg);
-  margin-bottom: var(--space-sm);
   font-size: var(--font-size-body);
   font-weight: 700;
   color: var(--color-text);
+}
+
+.sectionHint {
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
 }
 
 .memberList {

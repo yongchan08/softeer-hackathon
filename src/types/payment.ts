@@ -55,7 +55,7 @@ export interface Payment {
   /** 분담 방식이 아직 정해지지 않았으면 null. */
   splitMethod: SplitMethod | null;
   /**
-   * 정산에 포함할지 여부. 개인 지출은 체크를 해제한다 (FR-02, B-02).
+   * 정산에 포함할지 여부. 등록 직후에는 false 이고 B-02 에서 골라 켠다 (FR-02).
    * ERD 에 없는 필드 — docs/api-contract.md 의 보완 제안 참고.
    */
   includedInSettlement: boolean;

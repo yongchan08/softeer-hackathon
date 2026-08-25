@@ -49,8 +49,8 @@ export const mockPaymentStore = {
       amount: input.amount,
       currency: input.currency,
       splitMethod: null,
-      // 등록 직후에는 모두 정산 대상이다. 개인 지출만 B-02 에서 해제한다.
-      includedInSettlement: true,
+      // 등록 직후에는 아무것도 정산 대상이 아니다. B-02 에서 정산할 항목만 고른다.
+      includedInSettlement: false,
       receiptImageId: input.receiptImageId,
       createdAt: now,
       updatedAt: now,

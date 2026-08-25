@@ -180,7 +180,7 @@ B-01의 "내역 있음" 상태를 그리기 위한 참여자별 등록 요약.
 - `amount` · `currency` 는 **필수**, `merchant` · `paidAt` 은 `null` 허용 (FR-02)
 - 직접 입력한 내역은 `receiptImageId: null`
 - `payerMemberId` 는 등록한 본인이다. 결제자 변경 UI 가 없어 항상 이 값이 온다
-- 등록 직후 `includedInSettlement` 는 **`true`**. 개인 지출만 B-02 에서 해제한다
+- 등록 직후 `includedInSettlement` 는 **`false`**. B-02 에서 정산할 항목만 골라 켠다
 
 **응답 `201`** — `Payment[]`
 
@@ -218,7 +218,7 @@ A-08(만료)이 잘못 뜨거나 뜨지 않는다. 지금은 응답에 `expiresA
 ### 3. `PAYMENT.included_in_settlement` (필수)
 
 FR-02 의 "등록된 결제 내역 중 정산에 포함할 항목을 선택" 을 담을 자리가 ERD 에 없다.
-B-02 의 원형 체크가 이 값을 바꾼다. `boolean NOT NULL DEFAULT true` 를 권한다.
+B-02 의 원형 체크가 이 값을 바꾼다. `boolean NOT NULL DEFAULT false` 를 권한다.
 
 ### 4. `RECEIPT_IMAGE` 테이블 + `PAYMENT.receipt_image_id` (필수)
 

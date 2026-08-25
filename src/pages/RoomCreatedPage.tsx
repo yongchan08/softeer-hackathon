@@ -33,14 +33,15 @@ export function RoomCreatedPage() {
     [shareCode],
   );
 
-  const creator = room?.members[0];
+  const firstMember = room?.members[0];
 
-  // 방을 만든 직후라면 첫 번째 참여자를 본인으로 기억해둔다.
+  // 방을 만든 사람은 대개 맨 앞에 자기 닉네임을 적으므로 첫 번째를 기본으로 둔다.
+  // 아니라면 아래 목록에서 눌러 바꿀 수 있다.
   useEffect(() => {
-    if (creator && !identity) {
-      remember({ memberId: creator.id, nickname: creator.nickname });
+    if (firstMember && !identity) {
+      remember({ memberId: firstMember.id, nickname: firstMember.nickname });
     }
-  }, [creator, identity, remember]);
+  }, [firstMember, identity, remember]);
 
   const handleEnter = () => {
     navigate(roomHomePath(shareCode));
@@ -76,12 +77,16 @@ export function RoomCreatedPage() {
               </p>
 
               <h2 className={styles.sectionTitle}>참여자</h2>
+              <p className={styles.sectionHint}>어느 분이신가요? 눌러서 골라주세요.</p>
               <ul className={styles.memberList}>
                 {room.members.map((member) => (
                   <li key={member.id}>
                     <SelectableMemberRow
                       nickname={member.nickname}
-                      selected={member.id === creator?.id}
+                      selected={member.id === identity?.memberId}
+                      onSelect={() =>
+                        remember({ memberId: member.id, nickname: member.nickname })
+                      }
                     />
                   </li>
                 ))}
