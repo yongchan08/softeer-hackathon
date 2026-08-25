@@ -1,0 +1,10 @@
+node_modules
+dist
+*.tsbuildinfo
+.env.local
+.DS_Store
+*.local
+
+# 기획 문서 (로컬 보관 — Figma가 최신 기준이고 wireframe-prompt는 현재 Figma와 어긋난다)
+high-plan_hackathon/
+wireframe-prompt.md
