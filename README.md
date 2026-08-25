@@ -27,6 +27,23 @@ npm run dev          # http://localhost:5173
 | `VITE_USE_MOCK` | `true` | `true`면 `src/mocks`로 동작. **백엔드를 붙일 때 `false`** |
 | `VITE_SHARE_LINK_ORIGIN` | (비움) | 공유 링크에 쓸 origin. 비우면 현재 접속 origin |
 
+우선순위는 **호스팅 대시보드 환경변수 > `.env.local` > `.env.production` > `.env`** 다.
+Vite 는 실행 시점에 이미 존재하는 환경변수를 `.env` 파일보다 우선한다.
+
+## 배포 (Vercel)
+
+`vercel.json` 과 `.env.production` 이 저장소에 있어 추가 설정 없이 배포된다.
+
+- **`vercel.json`** — SPA 리라이트. 이게 없으면 `/r/{shareCode}` 공유 링크를 새 탭에서 열 때
+  Vercel 이 404 를 낸다. 링크 공유가 이 서비스의 핵심 플로우라 필수다
+- **`.env.production`** — 백엔드가 없는 동안 배포본도 목데이터로 뜨게 한다
+
+백엔드가 준비되면 `.env.production` 을 지우거나, Vercel > Settings > Environment Variables 에
+`VITE_USE_MOCK=false` 와 `VITE_API_BASE_URL` 을 넣는다. 대시보드 값이 파일보다 우선한다.
+
+> `VITE_USE_MOCK` 없이 배포하면 존재하지 않는 `/api` 로 요청이 나가 화면에
+> `요청을 처리하지 못했어요. (404)` 만 뜬다. 이 경우 브라우저 콘솔에 원인을 안내하는 경고가 찍힌다.
+
 ## 백엔드 연결
 
 1. `docs/api-contract.md`의 엔드포인트를 구현한다
