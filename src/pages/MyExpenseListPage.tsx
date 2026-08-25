@@ -118,7 +118,7 @@ export function MyExpenseListPage() {
             ) : (
               <div className={styles.content}>
                 {sections.map((section) => (
-                  <section key={section.key}>
+                  <section key={section.key} className={styles.section}>
                     <DateSectionHeader label={section.label} />
                     <div className={styles.rows}>
                       {section.items.map((payment) => (

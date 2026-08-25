@@ -25,6 +25,9 @@
   --color-avatar-bg: #e0e0e3;
   --color-avatar-text: #808086;
 
+  /* 아직 고르지 않은 원형 체크의 테두리와 체크 표시 */
+  --color-check-idle: #bcbcc3;
+
   /* 타이포 */
   --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont,
     'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;

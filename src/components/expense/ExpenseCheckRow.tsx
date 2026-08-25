@@ -9,19 +9,17 @@ interface ExpenseCheckRowProps {
 }
 
 /**
- * B-02 의 결제 내역 행.
- * 오른쪽 원형 체크로 정산에 포함할지 고른다. 개인 지출은 체크를 해제한다 (FR-02).
+ * B-02 의 결제 내역 카드.
+ *
+ * 오른쪽 원형 체크로 정산에 포함할지 고른다 (FR-02).
+ * 고르지 않은 카드도 흐리게 하지 않는다. 아직 안 고른 것이지 못 고르는 것이 아니라
+ * 상태는 체크 표시 하나로만 구분한다.
  */
 export function ExpenseCheckRow({ payment, onToggle }: ExpenseCheckRowProps) {
   const included = payment.includedInSettlement;
 
   return (
-    <button
-      type="button"
-      className={`${styles.row} ${included ? '' : styles.excluded}`}
-      onClick={onToggle}
-      aria-pressed={included}
-    >
+    <button type="button" className={styles.row} onClick={onToggle} aria-pressed={included}>
       <span className={styles.body}>
         <span className={styles.merchant}>{payment.merchant ?? '결제처 없음'}</span>
         <span className={styles.amount}>{formatAmount(payment.amount, payment.currency)}</span>
