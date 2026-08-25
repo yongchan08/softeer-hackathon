@@ -1,0 +1,5 @@
+.header {
+  padding: var(--space-md) 0 var(--space-xs);
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+}

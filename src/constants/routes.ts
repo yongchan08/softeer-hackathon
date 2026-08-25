@@ -20,8 +20,20 @@ export const ROUTES = {
   joinRoom: '/r/:shareCode',
   /** B-01 정산방 */
   roomHome: '/r/:shareCode/home',
-  /** flow #2 결제 내역 등록 — 이번 범위 밖 */
-  addExpense: '/r/:shareCode/expenses/new',
+  /** C-01 등록 방식 선택 */
+  expenseMethod: '/r/:shareCode/expenses/new',
+  /** C-02 선택한 스크린샷 확인 */
+  screenshotUpload: '/r/:shareCode/expenses/upload',
+  /** C-04 파싱 중 */
+  screenshotParsing: '/r/:shareCode/expenses/parsing',
+  /** C-05 · C-07 · C-08 파싱 결과 확인 */
+  parsedResult: '/r/:shareCode/expenses/review',
+  /** C-06 파싱 항목 수정 */
+  parsedItemEdit: '/r/:shareCode/expenses/review/:draftId',
+  /** C-09 직접 입력 */
+  manualExpense: '/r/:shareCode/expenses/manual',
+  /** B-02 내 결제 내역 리스트 */
+  myExpenses: '/r/:shareCode/expenses',
 } as const;
 
 export function createDonePath(shareCode: string): string {
@@ -36,6 +48,30 @@ export function roomHomePath(shareCode: string): string {
   return `/r/${shareCode}/home`;
 }
 
-export function addExpensePath(shareCode: string): string {
+export function expenseMethodPath(shareCode: string): string {
   return `/r/${shareCode}/expenses/new`;
+}
+
+export function screenshotUploadPath(shareCode: string): string {
+  return `/r/${shareCode}/expenses/upload`;
+}
+
+export function screenshotParsingPath(shareCode: string): string {
+  return `/r/${shareCode}/expenses/parsing`;
+}
+
+export function parsedResultPath(shareCode: string): string {
+  return `/r/${shareCode}/expenses/review`;
+}
+
+export function parsedItemEditPath(shareCode: string, draftId: string): string {
+  return `/r/${shareCode}/expenses/review/${draftId}`;
+}
+
+export function manualExpensePath(shareCode: string): string {
+  return `/r/${shareCode}/expenses/manual`;
+}
+
+export function myExpensesPath(shareCode: string): string {
+  return `/r/${shareCode}/expenses`;
 }

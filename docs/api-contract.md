@@ -114,6 +114,91 @@ B-01의 "내역 있음" 상태를 그리기 위한 참여자별 등록 요약.
 
 ---
 
+## POST /rooms/{shareCode}/receipt-images
+
+결제 스크린샷 **1장**을 올려 결제 내역을 읽어낸다. `multipart/form-data` 로 보낸다.
+
+여러 장을 올릴 때도 장당 한 번씩 호출한다. 진행률(`3장 중 2장째`)은 프론트가
+완료 개수로 세므로 서버에 파싱 작업 상태 테이블이 필요 없고, 한 장이 실패해도
+나머지 장의 결과는 살릴 수 있다.
+
+**요청** — `image` (파일), `displayOrder` (0부터)
+
+**응답 `200`**
+
+```json
+{
+  "image": { "id": "42", "url": "https://.../42.png", "displayOrder": 0 },
+  "drafts": [
+    {
+      "id": "42-1",
+      "receiptImageId": "42",
+      "merchant": "이치란 라멘",
+      "paidAt": "2026-08-21T20:14:00Z",
+      "amount": "3200",
+      "currency": "JPY"
+    },
+    {
+      "id": "42-2",
+      "receiptImageId": "42",
+      "merchant": "스타벅스 난바",
+      "paidAt": "2026-08-20T11:30:00Z",
+      "amount": null,
+      "currency": "JPY"
+    }
+  ]
+}
+```
+
+- **한 장에 여러 건이 있으면 각각 별도 초안으로 나눈다** (FR-02)
+- **읽지 못한 필드는 `null`** 로 내려준다. 빈 문자열이나 추측값을 넣지 않는다.
+  화면이 `금액을 못 읽었어요` 처럼 어떤 필드가 비었는지 알려야 하기 때문이다
+- `drafts` 는 아직 `PAYMENT` 가 아니다. 사용자가 확인·수정한 뒤 아래 등록 API 로 확정된다
+- 아무것도 못 읽었으면 `drafts: []` 를 준다. 에러가 아니다
+
+## POST /rooms/{shareCode}/payments
+
+확인을 마친 결제 내역을 한 번에 등록한다.
+
+**요청**
+
+```json
+{
+  "payerMemberId": "11",
+  "payments": [
+    {
+      "merchant": "이치란 라멘",
+      "paidAt": "2026-08-21T20:14:00Z",
+      "amount": "3200",
+      "currency": "JPY",
+      "receiptImageId": "42"
+    }
+  ]
+}
+```
+
+- `amount` · `currency` 는 **필수**, `merchant` · `paidAt` 은 `null` 허용 (FR-02)
+- 직접 입력한 내역은 `receiptImageId: null`
+- `payerMemberId` 는 등록한 본인이다. 결제자 변경 UI 가 없어 항상 이 값이 온다
+- 등록 직후 `includedInSettlement` 는 **`true`**. 개인 지출만 B-02 에서 해제한다
+
+**응답 `201`** — `Payment[]`
+
+## GET /rooms/{shareCode}/payments
+
+**쿼리** — `payerMemberId` (선택). 주면 그 사람이 결제한 것만 거른다.
+
+**응답 `200`** — `Payment[]`, `paidAt` 내림차순. `paidAt` 이 `null` 인 건 마지막으로.
+
+## PATCH /rooms/{shareCode}/payments/{paymentId}
+
+정산에 포함할지 여부를 바꾼다. B-02 의 원형 체크가 호출한다.
+
+**요청** — `{ "includedInSettlement": false }`
+**응답 `200`** — `Payment`
+
+---
+
 ## ERD 보완 제안
 
 화면을 그리는 데 필요하지만 제공된 ERD에 없는 것들이다. **백엔드에서 확정이 필요하다.**
@@ -130,7 +215,30 @@ A-08(만료)이 잘못 뜨거나 뜨지 않는다. 지금은 응답에 `expiresA
 (`src/constants/roomRules.ts`의 `DEFAULT_CURRENCY`).
 서버 기본값으로 대체 가능하면 요청 필드에서 빼도 된다.
 
-### 3. 닉네임 선점 상태 — **의도적으로 만들지 않음**
+### 3. `PAYMENT.included_in_settlement` (필수)
+
+FR-02 의 "등록된 결제 내역 중 정산에 포함할 항목을 선택" 을 담을 자리가 ERD 에 없다.
+B-02 의 원형 체크가 이 값을 바꾼다. `boolean NOT NULL DEFAULT true` 를 권한다.
+
+### 4. `RECEIPT_IMAGE` 테이블 + `PAYMENT.receipt_image_id` (필수)
+
+C-05 는 결과를 **스크린샷별로 묶어** 보여주고(`스크린샷 1 · 3건`), 썸네일을 누르면
+원본을 크게 띄운다. C-06 도 수정 화면에 원본을 함께 보여준다.
+어떤 결제가 어느 스크린샷에서 나왔는지 모르면 이 화면들을 그릴 수 없다.
+
+```
+RECEIPT_IMAGE {
+    bigint   id PK
+    bigint   room_id FK
+    bigint   uploaded_by_member_id FK
+    varchar  url
+    int      display_order
+    datetime created_at
+}
+PAYMENT + receipt_image_id FK  "nullable, 직접 입력한 내역은 null"
+```
+
+### 5. 닉네임 선점 상태 — **의도적으로 만들지 않음**
 
 `ROOM_MEMBER`에 claim 관련 컬럼이 없는 것은 설계 결정이다.
 서버는 누가 어떤 닉네임을 가져갔는지 알지 않는다.

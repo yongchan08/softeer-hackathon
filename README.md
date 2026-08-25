@@ -1,6 +1,7 @@
-# 여행 정산 — 프론트엔드 (flow #1)
+# 여행 정산 — 프론트엔드
 
-해외여행 공동 경비를 링크 하나로 정산하는 모바일 웹. 이 저장소는 **flow #1 (방 개설 · 참여)** 구현이다.
+해외여행 공동 경비를 링크 하나로 정산하는 모바일 웹.
+현재 **flow #1 (방 개설 · 참여)** 과 **flow #2 (결제 내역 등록)** 가 구현되어 있다.
 
 가입·설치 없이 링크로 참여하고, 정산방은 만든 날부터 **7일 뒤 자동 삭제**된다.
 
@@ -64,7 +65,18 @@ Vite 는 실행 시점에 이미 존재하는 환경변수를 `.env` 파일보�
 | A-06 | 링크 진입 · 닉네임 선택 | `/r/:shareCode` |
 | A-08 | 만료된 방 | `/r/:shareCode` (410 응답 시) |
 | B-01 | 정산방 (빈 상태 / 내역 있음) | `/r/:shareCode/home` |
-| — | 결제 내역 등록 (flow #2 자리표시) | `/r/:shareCode/expenses/new` |
+
+### flow #2 — 결제 내역 등록
+
+| ID | 화면 | 경로 |
+|---|---|---|
+| C-01 | 등록 방식 선택 | `/r/:shareCode/expenses/new` |
+| C-02 | 선택한 스크린샷 확인 | `/r/:shareCode/expenses/upload` |
+| C-04 | 파싱 중 | `/r/:shareCode/expenses/parsing` |
+| C-05 · C-07 · C-08 | 파싱 결과 · 필드 누락 | `/r/:shareCode/expenses/review` |
+| C-06 | 파싱 항목 수정 | `/r/:shareCode/expenses/review/:draftId` |
+| C-09 | 직접 입력 | `/r/:shareCode/expenses/manual` |
+| B-02 | 내 결제 내역 · 정산 포함 선택 | `/r/:shareCode/expenses` |
 
 ### 목 모드로 화면 확인하기
 
@@ -75,6 +87,9 @@ Vite 는 실행 시점에 이미 존재하는 환경변수를 `.env` 파일보�
 | A-08 **만료** | `/r/expired` — 8일 전에 만들어진 방 |
 | **오류 상태** | `VITE_USE_MOCK=false` + 없는 주소 → A-06·B-01에 재시도 UI |
 | A-04 **검증 에러** | 닉네임을 중복 / 11자 / 공백만 입력 |
+| C-05 **파싱 결과** | 아무 이미지나 3장 올린다. 목은 장마다 다른 결과를 준다 |
+| C-07 · C-08 **필드 누락** | 2장째는 금액을, 3장째는 통화를 못 읽은 것으로 내려온다 |
+| C-04 **전체 실패** | 목에서는 재현되지 않는다. 실제 API 가 `drafts: []` 만 줄 때 나온다 |
 
 새로 만든 방은 `sessionStorage`에 보관되므로 탭을 닫으면 사라진다.
 
@@ -87,9 +102,9 @@ src/
 ├── mocks/        목 데이터와 저장소. 백엔드가 붙으면 쓰이지 않는다
 ├── types/        API·도메인 타입. ERD 와 1:1 대응
 ├── constants/    라우트 · 정산방 규칙(1~10자, 최소 2명, 7일 …)
-├── hooks/        useAsync(로딩·오류·재시도) · 방 생성 위저드 · 로컬 신원
-├── utils/        닉네임 검증 · 클립보드 · 공유 링크
-├── components/   layout(프레임·앱바·하단바) / common(버튼·입력·아바타…) / room
+├── hooks/        useAsync(로딩·오류·재시도) · 방 생성 위저드 · 스크린샷 등록 흐름 · 로컬 신원
+├── utils/        닉네임 검증 · 클립보드 · 공유 링크 · 금액·날짜 포맷
+├── components/   layout(프레임·앱바·하단바) / common(버튼·입력·아바타…) / room / expense
 ├── pages/        화면 1개 = 파일 1개
 └── styles/       tokens.css(디자인 토큰) · global.css
 ```

@@ -1,0 +1,41 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) 0;
+  text-align: left;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.merchant {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.amount {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.meta {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+}
+
+/* 정산에서 뺀 항목은 흐리게 해 남은 것과 구분한다. */
+.excluded .merchant,
+.excluded .amount,
+.excluded .meta {
+  color: var(--color-text-muted);
+}

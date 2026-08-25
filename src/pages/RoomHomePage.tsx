@@ -10,7 +10,7 @@ import { MobileFrame } from '../components/layout/MobileFrame';
 import { ScreenBody } from '../components/layout/ScreenBody';
 import { MemberEntryCard } from '../components/room/MemberEntryCard';
 import { RoomSummaryHeader } from '../components/room/RoomSummaryHeader';
-import { ROUTES, addExpensePath } from '../constants/routes';
+import { ROUTES, expenseMethodPath, myExpensesPath } from '../constants/routes';
 import { useAsync } from '../hooks/useAsync';
 import {
   getMemberPaymentSummaries,
@@ -79,7 +79,7 @@ export function RoomHomePage() {
                     <MemberEntryCard
                       nickname={summary.nickname}
                       paymentCount={summary.paymentCount}
-                      onViewEntries={() => navigate(addExpensePath(shareCode))}
+                      onViewEntries={() => navigate(myExpensesPath(shareCode))}
                     />
                   </li>
                 ))}
@@ -92,7 +92,7 @@ export function RoomHomePage() {
             )}
           </ScreenBody>
           <BottomActionBar>
-            <Button onClick={() => navigate(addExpensePath(shareCode))}>
+            <Button onClick={() => navigate(expenseMethodPath(shareCode))}>
               결제 내역 추가
             </Button>
           </BottomActionBar>

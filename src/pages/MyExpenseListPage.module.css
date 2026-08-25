@@ -1,0 +1,8 @@
+.content {
+  padding: 0 var(--space-screen-x);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+}
