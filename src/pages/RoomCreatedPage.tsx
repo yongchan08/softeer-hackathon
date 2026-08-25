@@ -11,7 +11,7 @@ import { MobileFrame } from '../components/layout/MobileFrame';
 import { ScreenBody } from '../components/layout/ScreenBody';
 import { ScreenHeader } from '../components/layout/ScreenHeader';
 import { ROOM_TTL_DAYS } from '../constants/roomRules';
-import { ROUTES, roomHomePath } from '../constants/routes';
+import { roomHomePath } from '../constants/routes';
 import { useAsync } from '../hooks/useAsync';
 import { useLocalIdentity } from '../hooks/useLocalIdentity';
 import { getRoomByShareCode } from '../services/roomService';
@@ -49,7 +49,8 @@ export function RoomCreatedPage() {
 
   return (
     <MobileFrame>
-      <AppBar backTo={ROUTES.landing} />
+      {/* 방이 이미 만들어져 되돌릴 수 없다. 링크를 잃지 않도록 뒤로가기를 두지 않는다. */}
+      <AppBar showBack={false} />
       {status === 'loading' && <LoadingState />}
 
       {status === 'error' && (

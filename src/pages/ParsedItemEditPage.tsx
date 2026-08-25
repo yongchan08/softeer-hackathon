@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AmountCurrencyInput } from '../components/common/AmountCurrencyInput';
 import { Button } from '../components/common/Button';
 import { FieldLabel } from '../components/common/FieldLabel';
@@ -38,9 +38,10 @@ export function ParsedItemEditPage() {
   const [currency, setCurrency] = useState<CurrencyCode>(draft?.currency ?? DEFAULT_CURRENCY);
   const [showPreview, setShowPreview] = useState(false);
 
+  // 새로고침 등으로 초안이 사라진 경우. 렌더 도중 navigate 를 부르면 멈추므로
+  // 선언형 Navigate 로 되돌린다.
   if (!draft) {
-    navigate(parsedResultPath(shareCode), { replace: true });
-    return null;
+    return <Navigate to={parsedResultPath(shareCode)} replace />;
   }
 
   const amountValid = amount.trim().length > 0 && Number(amount) > 0;
@@ -54,7 +55,8 @@ export function ParsedItemEditPage() {
       amount,
       currency,
     });
-    navigate(parsedResultPath(shareCode));
+    // 수정은 C-05 의 한 상태이므로 기록을 늘리지 않는다.
+    navigate(parsedResultPath(shareCode), { replace: true });
   };
 
   return (

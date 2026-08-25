@@ -14,6 +14,7 @@ import { ScreenHeader } from '../components/layout/ScreenHeader';
 import { ACCEPTED_IMAGE_TYPES, MAX_SCREENSHOT_COUNT } from '../constants/roomRules';
 import { expenseMethodPath, screenshotParsingPath } from '../constants/routes';
 import { useExpenseDraft } from '../hooks/useExpenseDraft';
+import { useLeaveConsumedScreen } from '../hooks/useLeaveConsumedScreen';
 import styles from './ScreenshotUploadPage.module.css';
 
 /**
@@ -27,12 +28,11 @@ export function ScreenshotUploadPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const overflowRef = useRef(0);
 
-  // 새로고침 등으로 고른 파일이 사라지면 방식 선택으로 되돌린다.
+  // 고른 파일이 사라졌으면 그릴 것이 없다.
+  const leave = useLeaveConsumedScreen(expenseMethodPath(shareCode));
   useEffect(() => {
-    if (screenshots.length === 0) {
-      navigate(expenseMethodPath(shareCode), { replace: true });
-    }
-  }, [screenshots.length, navigate, shareCode]);
+    if (screenshots.length === 0) leave();
+  }, [screenshots.length, leave]);
 
   const remaining = MAX_SCREENSHOT_COUNT - screenshots.length;
 

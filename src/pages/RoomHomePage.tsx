@@ -10,7 +10,7 @@ import { MobileFrame } from '../components/layout/MobileFrame';
 import { ScreenBody } from '../components/layout/ScreenBody';
 import { MemberEntryCard } from '../components/room/MemberEntryCard';
 import { RoomSummaryHeader } from '../components/room/RoomSummaryHeader';
-import { ROUTES, expenseMethodPath, myExpensesPath } from '../constants/routes';
+import { expenseMethodPath, myExpensesPath } from '../constants/routes';
 import { useAsync } from '../hooks/useAsync';
 import {
   getMemberPaymentSummaries,
@@ -53,7 +53,8 @@ export function RoomHomePage() {
 
   return (
     <MobileFrame>
-      <AppBar backTo={ROUTES.landing} />
+      {/* 참여자의 홈. 링크로 바로 들어왔다면 되돌아갈 곳이 없다. */}
+      <AppBar />
       {status === 'loading' && <LoadingState />}
 
       {status === 'error' && (

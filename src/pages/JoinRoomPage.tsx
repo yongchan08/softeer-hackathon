@@ -9,7 +9,7 @@ import { BottomActionBar } from '../components/layout/BottomActionBar';
 import { MobileFrame } from '../components/layout/MobileFrame';
 import { ScreenBody } from '../components/layout/ScreenBody';
 import { ScreenHeader } from '../components/layout/ScreenHeader';
-import { ROUTES, roomHomePath } from '../constants/routes';
+import { roomHomePath } from '../constants/routes';
 import { useAsync } from '../hooks/useAsync';
 import { useLocalIdentity } from '../hooks/useLocalIdentity';
 import { getRoomByShareCode } from '../services/roomService';
@@ -48,7 +48,8 @@ export function JoinRoomPage() {
 
   return (
     <MobileFrame>
-      <AppBar backTo={ROUTES.landing} />
+      {/* 링크로 들어온 최상위 화면이라 되돌아갈 곳이 없다. */}
+      <AppBar />
       {status === 'loading' && <LoadingState />}
 
       {status === 'error' && (

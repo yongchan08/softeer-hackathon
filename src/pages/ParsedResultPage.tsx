@@ -15,6 +15,7 @@ import {
   parsedItemEditPath,
 } from '../constants/routes';
 import { isDraftComplete, useExpenseDraft } from '../hooks/useExpenseDraft';
+import { useLeaveConsumedScreen } from '../hooks/useLeaveConsumedScreen';
 import { useLocalIdentity } from '../hooks/useLocalIdentity';
 import { createPayments } from '../services/paymentService';
 import { isApiError } from '../types/api';
@@ -39,12 +40,11 @@ export function ParsedResultPage() {
   /** 등록을 마치면 초안을 비우는데, 그것을 "잘못 들어옴" 으로 오해하지 않게 한다. */
   const submittedRef = useRef(false);
 
-  // 새로고침 등으로 초안이 사라지면 등록 방식 선택으로 되돌린다.
+  // 초안이 사라졌으면 그릴 것이 없다. 등록을 막 마친 경우는 제외한다.
+  const leave = useLeaveConsumedScreen(expenseMethodPath(shareCode));
   useEffect(() => {
-    if (drafts.length === 0 && !submittedRef.current) {
-      navigate(expenseMethodPath(shareCode), { replace: true });
-    }
-  }, [drafts.length, navigate, shareCode]);
+    if (drafts.length === 0 && !submittedRef.current) leave();
+  }, [drafts.length, leave]);
 
   const incomplete = useMemo(() => drafts.filter((d) => !isDraftComplete(d)), [drafts]);
   const complete = useMemo(() => drafts.filter(isDraftComplete), [drafts]);

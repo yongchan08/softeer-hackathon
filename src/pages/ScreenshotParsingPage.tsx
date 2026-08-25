@@ -16,6 +16,7 @@ import {
   screenshotUploadPath,
 } from '../constants/routes';
 import { useExpenseDraft } from '../hooks/useExpenseDraft';
+import { useLeaveConsumedScreen } from '../hooks/useLeaveConsumedScreen';
 import { parseReceiptImage } from '../services/paymentService';
 import type { ParsedPaymentDraft, ReceiptImage } from '../types/payment';
 import styles from './ScreenshotParsingPage.module.css';
@@ -50,9 +51,11 @@ export function ScreenshotParsingPage() {
     };
   }, []);
 
+  const leave = useLeaveConsumedScreen(expenseMethodPath(shareCode));
+
   useEffect(() => {
     if (total === 0) {
-      navigate(expenseMethodPath(shareCode), { replace: true });
+      leave();
       return;
     }
     if (startedRef.current) return;
@@ -83,7 +86,7 @@ export function ScreenshotParsingPage() {
         navigate(parsedResultPath(shareCode), { replace: true });
       }
     })();
-  }, [total, screenshots, shareCode, navigate, setParsed]);
+  }, [total, screenshots, shareCode, navigate, setParsed, leave]);
 
   if (failed) {
     return (
