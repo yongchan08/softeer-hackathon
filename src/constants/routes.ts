@@ -34,6 +34,21 @@ export const ROUTES = {
   manualExpense: '/r/:shareCode/expenses/manual',
   /** B-02 내 결제 내역 리스트 */
   myExpenses: '/r/:shareCode/expenses',
+
+  /** D-01 · D-04 그룹 목록 */
+  splitGroups: '/r/:shareCode/groups',
+  /** D-02 그룹 만들기 · 인원 선택 */
+  splitGroupNew: '/r/:shareCode/groups/new',
+  /** D-02 그룹 인원 수정 */
+  splitGroupEdit: '/r/:shareCode/groups/:groupId/edit',
+  /** D-05 · D-06 그룹이 낼 항목 선택 */
+  splitGroupItems: '/r/:shareCode/groups/:groupId/items',
+  /** D-05 금액 나누기 */
+  splitGroupMethod: '/r/:shareCode/groups/:groupId/split',
+  /** D-12 자동 귀속 확인 */
+  splitUnassigned: '/r/:shareCode/groups/confirm',
+  /** flow #4 환율 · 최종 정산 — 이번 범위 밖 */
+  settlement: '/r/:shareCode/settlement',
 } as const;
 
 export function createDonePath(shareCode: string): string {
@@ -74,4 +89,32 @@ export function manualExpensePath(shareCode: string): string {
 
 export function myExpensesPath(shareCode: string): string {
   return `/r/${shareCode}/expenses`;
+}
+
+export function splitGroupsPath(shareCode: string): string {
+  return `/r/${shareCode}/groups`;
+}
+
+export function splitGroupNewPath(shareCode: string): string {
+  return `/r/${shareCode}/groups/new`;
+}
+
+export function splitGroupEditPath(shareCode: string, groupId: string): string {
+  return `/r/${shareCode}/groups/${groupId}/edit`;
+}
+
+export function splitGroupItemsPath(shareCode: string, groupId: string): string {
+  return `/r/${shareCode}/groups/${groupId}/items`;
+}
+
+export function splitGroupMethodPath(shareCode: string, groupId: string): string {
+  return `/r/${shareCode}/groups/${groupId}/split`;
+}
+
+export function splitUnassignedPath(shareCode: string): string {
+  return `/r/${shareCode}/groups/confirm`;
+}
+
+export function settlementPath(shareCode: string): string {
+  return `/r/${shareCode}/settlement`;
 }

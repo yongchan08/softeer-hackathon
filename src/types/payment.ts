@@ -105,6 +105,11 @@ export interface CreatePaymentInput {
   /** 필수. */
   currency: CurrencyCode;
   receiptImageId: string | null;
+  /**
+   * 정산에 포함할지 여부. 생략하면 false 다.
+   * 분담 화면에서 `빠뜨린 항목 추가하기` 로 넣은 건은 곧바로 정산 대상이라 true 로 보낸다.
+   */
+  includedInSettlement?: boolean;
 }
 
 /** PAYMENT_SHARE — 결제 1건에 대한 참여자별 부담액. */

@@ -17,9 +17,15 @@ import { RoomCreatedPage } from './pages/RoomCreatedPage';
 import { RoomHomePage } from './pages/RoomHomePage';
 import { ScreenshotParsingPage } from './pages/ScreenshotParsingPage';
 import { ScreenshotUploadPage } from './pages/ScreenshotUploadPage';
+import { SettlementPlaceholderPage } from './pages/SettlementPlaceholderPage';
+import { SplitGroupItemsPage } from './pages/SplitGroupItemsPage';
+import { SplitGroupListPage } from './pages/SplitGroupListPage';
+import { SplitGroupMembersPage } from './pages/SplitGroupMembersPage';
+import { SplitMethodPage } from './pages/SplitMethodPage';
+import { UnassignedItemsPage } from './pages/UnassignedItemsPage';
 
 /**
- * flow #1 (방 개설 · 참여) · flow #2 (결제 내역 등록) 라우팅.
+ * flow #1 (방 개설 · 참여) · flow #2 (결제 내역 등록) · flow #3 (그룹 분담) 라우팅.
  *
  * 방 생성 위저드와 스크린샷 등록 흐름은 각각 화면 사이에서 입력을 공유하므로
  * Provider 로 감싼다.
@@ -47,6 +53,15 @@ export function App() {
             <Route path={ROUTES.parsedResult} element={<ParsedResultPage />} />
             <Route path={ROUTES.manualExpense} element={<ManualExpensePage />} />
             <Route path={ROUTES.myExpenses} element={<MyExpenseListPage />} />
+
+            {/* 고정 경로가 :groupId 보다 먼저 와야 confirm 이 그룹 id 로 잡히지 않는다. */}
+            <Route path={ROUTES.splitUnassigned} element={<UnassignedItemsPage />} />
+            <Route path={ROUTES.splitGroupNew} element={<SplitGroupMembersPage />} />
+            <Route path={ROUTES.splitGroupEdit} element={<SplitGroupMembersPage />} />
+            <Route path={ROUTES.splitGroupItems} element={<SplitGroupItemsPage />} />
+            <Route path={ROUTES.splitGroupMethod} element={<SplitMethodPage />} />
+            <Route path={ROUTES.splitGroups} element={<SplitGroupListPage />} />
+            <Route path={ROUTES.settlement} element={<SettlementPlaceholderPage />} />
 
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

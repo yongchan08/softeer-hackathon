@@ -180,7 +180,9 @@ B-01의 "내역 있음" 상태를 그리기 위한 참여자별 등록 요약.
 - `amount` · `currency` 는 **필수**, `merchant` · `paidAt` 은 `null` 허용 (FR-02)
 - 직접 입력한 내역은 `receiptImageId: null`
 - `payerMemberId` 는 등록한 본인이다. 결제자 변경 UI 가 없어 항상 이 값이 온다
-- 등록 직후 `includedInSettlement` 는 **`false`**. B-02 에서 정산할 항목만 골라 켠다
+- 등록 직후 `includedInSettlement` 는 **`false`**. B-02 에서 정산할 항목만 골라 켠다.
+  요청에 `includedInSettlement: true` 를 실어 보내면 그대로 켠 채로 만든다
+  (분담 화면의 `빠뜨린 항목 추가하기`)
 
 **응답 `201`** — `Payment[]`
 
@@ -196,6 +198,83 @@ B-01의 "내역 있음" 상태를 그리기 위한 참여자별 등록 요약.
 
 **요청** — `{ "includedInSettlement": false }`
 **응답 `200`** — `Payment`
+
+---
+
+## GET /rooms/{shareCode}/split-groups
+
+방의 분담 그룹 목록. **`전체` 그룹이 항상 첫 번째**로 온다.
+
+`전체` 는 사용자가 만들지 않는다. 방을 만들 때 방 전원으로 서버가 함께 만들어두고,
+지우거나 인원을 바꿀 수 없다.
+
+**응답 `200`**
+
+```json
+[
+  {
+    "id": "1",
+    "roomId": "1",
+    "name": "전체",
+    "type": "ALL",
+    "memberIds": ["11", "12", "13", "14"],
+    "createdAt": "2026-08-23T09:12:00Z",
+    "updatedAt": "2026-08-23T09:12:00Z"
+  },
+  {
+    "id": "2",
+    "roomId": "1",
+    "name": "민서·하늘",
+    "type": "CUSTOM",
+    "memberIds": ["12", "13"],
+    "createdAt": "2026-08-25T10:00:00Z",
+    "updatedAt": "2026-08-25T10:00:00Z"
+  }
+]
+```
+
+- `name` 은 **서버가 만든다.** 닉네임을 가운뎃점으로 나열하고, 5명 이상이면 `민서 외 4명`
+- `type` 이 `ALL` 인 그룹은 방마다 정확히 하나다
+
+## POST /rooms/{shareCode}/split-groups
+
+**요청** — `{ "memberIds": ["12", "13"] }`
+
+- **2명 이상**이어야 한다. 1명짜리 그룹은 만들 수 없다.
+  혼자 부담할 항목은 정산 대상에서 빼는 것(`includedInSettlement: false`)으로 처리한다
+- 전원을 고른 조합도 `CUSTOM` 으로 만들지 않는다. 그건 `전체` 그룹이다
+
+**응답 `201`** — `SplitGroup`
+
+## PATCH /rooms/{shareCode}/split-groups/{groupId}
+
+그룹 인원을 바꾼다. `name` 도 새 조합으로 다시 만들어진다.
+
+**요청** — `{ "memberIds": ["12", "13", "14"] }`
+**응답 `200`** — `SplitGroup`
+
+`type` 이 `ALL` 인 그룹에는 쓸 수 없다.
+
+## DELETE /rooms/{shareCode}/split-groups/{groupId}
+
+그룹을 지운다. **담겨 있던 결제 항목은 `split_group_id` 가 `null` 로 돌아간다**
+(미분류 → 정산 시 `전체` 그룹으로 자동 귀속).
+
+`type` 이 `ALL` 인 그룹은 지울 수 없다.
+
+**응답 `204`**
+
+## PUT /rooms/{shareCode}/split-groups/{groupId}/payments
+
+그룹이 낼 항목을 확정한다. 보낸 목록이 곧 최종 상태다.
+
+**요청** — `{ "paymentIds": ["101", "104", "105"] }`
+
+- 목록에 없는데 이 그룹에 담겨 있던 항목은 **미분류로 되돌린다**
+- **한 결제 항목은 한 그룹에만 속한다.** 다른 그룹이 이미 가져간 항목이 들어오면
+  `409 PAYMENT_ALREADY_ASSIGNED` 로 거절한다. 화면은 그런 항목을 고를 수 없게 막고 있다
+
+**응답 `200`** — 방의 `Payment[]` (갱신된 상태)
 
 ---
 

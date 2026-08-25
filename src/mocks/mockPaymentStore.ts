@@ -50,7 +50,8 @@ export const mockPaymentStore = {
       currency: input.currency,
       splitMethod: null,
       // 등록 직후에는 아무것도 정산 대상이 아니다. B-02 에서 정산할 항목만 고른다.
-      includedInSettlement: false,
+      // 분담 도중 빠뜨린 항목을 넣는 경우만 곧바로 대상이 된다.
+      includedInSettlement: input.includedInSettlement ?? false,
       receiptImageId: input.receiptImageId,
       createdAt: now,
       updatedAt: now,
@@ -58,6 +59,44 @@ export const mockPaymentStore = {
 
     write([...read(), ...created]);
     return created;
+  },
+
+  /** 결제 항목들을 한 그룹에 담는다. 목록에서 빠진 것은 그룹에서 뺀다. */
+  assignToGroup(roomId: string, groupId: string, paymentIds: string[]): Payment[] {
+    const payments = read();
+    const now = new Date().toISOString();
+
+    for (const payment of payments) {
+      if (payment.roomId !== roomId) continue;
+
+      const shouldBelong = paymentIds.includes(payment.id);
+      const belongsNow = payment.splitGroupId === groupId;
+
+      // 한 항목은 한 그룹에만 속한다. 다른 그룹 것은 건드리지 않는다.
+      if (shouldBelong && !belongsNow) {
+        payment.splitGroupId = groupId;
+        payment.updatedAt = now;
+      } else if (!shouldBelong && belongsNow) {
+        payment.splitGroupId = null;
+        payment.updatedAt = now;
+      }
+    }
+
+    write(payments);
+    return payments.filter((payment) => payment.roomId === roomId).sort(byPaidAtDesc);
+  },
+
+  /** 그룹이 사라지면 담겨 있던 항목을 미분류로 되돌린다. */
+  releaseGroup(groupId: string): void {
+    const payments = read();
+    const now = new Date().toISOString();
+    for (const payment of payments) {
+      if (payment.splitGroupId === groupId) {
+        payment.splitGroupId = null;
+        payment.updatedAt = now;
+      }
+    }
+    write(payments);
   },
 
   setIncluded(paymentId: string, included: boolean): Payment {

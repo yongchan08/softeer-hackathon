@@ -12,7 +12,12 @@ import { BottomActionBar } from '../components/layout/BottomActionBar';
 import { MobileFrame } from '../components/layout/MobileFrame';
 import { ScreenBody } from '../components/layout/ScreenBody';
 import { ScreenHeader } from '../components/layout/ScreenHeader';
-import { expenseMethodPath, joinRoomPath, roomHomePath } from '../constants/routes';
+import {
+  expenseMethodPath,
+  joinRoomPath,
+  roomHomePath,
+  splitGroupsPath,
+} from '../constants/routes';
 import { useAsync } from '../hooks/useAsync';
 import { useLocalIdentity } from '../hooks/useLocalIdentity';
 import { getPayments, updatePaymentInclusion } from '../services/paymentService';
@@ -142,7 +147,12 @@ export function MyExpenseListPage() {
                 결제 내역 추가
               </Button>
             ) : (
-              <Button disabled={includedCount === 0}>내 정산 인원 선택하기</Button>
+              <Button
+                disabled={includedCount === 0}
+                onClick={() => navigate(splitGroupsPath(shareCode))}
+              >
+                내 정산 인원 선택하기
+              </Button>
             )}
           </BottomActionBar>
         </>
