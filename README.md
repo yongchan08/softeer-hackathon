@@ -76,7 +76,7 @@ Vite 는 실행 시점에 이미 존재하는 환경변수를 `.env` 파일보�
 | C-05 · C-07 · C-08 | 파싱 결과 · 필드 누락 | `/r/:shareCode/expenses/review` |
 | C-06 | 파싱 항목 수정 | `/r/:shareCode/expenses/review/:draftId` |
 | C-09 | 직접 입력 | `/r/:shareCode/expenses/manual` |
-| B-02 | 내 결제 내역 · 정산 포함 선택 | `/r/:shareCode/expenses` |
+| B-02 | 내 결제 내역 · 정산 포함 선택 (`+ 추가하기` → C-09) | `/r/:shareCode/expenses` |
 
 ### flow #3 — 그룹 분담 (앞부분)
 

@@ -11,10 +11,10 @@ import { AppBar } from '../components/layout/AppBar';
 import { BottomActionBar } from '../components/layout/BottomActionBar';
 import { MobileFrame } from '../components/layout/MobileFrame';
 import { ScreenBody } from '../components/layout/ScreenBody';
-import { ScreenHeader } from '../components/layout/ScreenHeader';
 import {
   expenseMethodPath,
   joinRoomPath,
+  manualExpensePath,
   roomHomePath,
   splitGroupsPath,
 } from '../constants/routes';
@@ -113,7 +113,17 @@ export function MyExpenseListPage() {
       {status === 'success' && data && (
         <>
           <ScreenBody>
-            <ScreenHeader title={data.room.title} />
+            <div className={styles.titleRow}>
+              <h1 className={styles.title}>{data.room.title}</h1>
+              <button
+                type="button"
+                className={styles.addButton}
+                onClick={() => navigate(manualExpensePath(shareCode))}
+              >
+                <PlusIcon />
+                추가하기
+              </button>
+            </div>
 
             {payments.length === 0 ? (
               <EmptyState
@@ -183,4 +193,17 @@ function groupByDate(payments: Payment[]): DateSection[] {
   }
 
   return sections;
+}
+
+function PlusIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
+      <path
+        d="M8.5 4v9M4 8.5h9"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
 }
